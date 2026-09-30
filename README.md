@@ -41,6 +41,39 @@ Traditional paper and basic PDF certificates are highly susceptible to forgery, 
 - **Blockchain Engine:** Custom Python implementation replicating core Web3 concepts (Block hashing, Nonce, Smart Contract State).
 - **Frontend:** HTML5, Tailwind CSS, JavaScript (Vanilla), and Canvas Confetti for an elegant responsive UI.
 
+### Flow Diagram
+
+```mermaid
+graph TD
+    subgraph Frontend [Web Interface]
+        UI[Admin Issuance Portal]
+        Verifier[Public Verifier / QR Scan]
+    end
+
+    subgraph Backend [FastAPI Server]
+        API[REST API Endpoints]
+        Schema[Pydantic Validation]
+    end
+
+    subgraph Blockchain [Blockchain Engine]
+        State[Smart Contract State]
+        Miner[Proof-of-Work Miner]
+        Ledger[Immutable Block Ledger]
+    end
+
+    UI -- "1. Issue Certificate (JSON)" --> API
+    API -- "2. Validate Payload" --> Schema
+    Schema -- "3. Compute SHA-256 Hash" --> State
+    State -- "4. Register Hash & Mint" --> Miner
+    Miner -- "5. Append Block" --> Ledger
+    Ledger -- "6. Return Transaction ID" --> API
+    API -- "7. Generate QR & Preview" --> UI
+
+    Verifier -- "Scan QR / Enter Hash" --> API
+    API -- "Query Authenticity" --> State
+    State -- "Return Valid/Revoked/Tampered" --> Verifier
+```
+
 ---
 
 ## 🚀 Getting Started
