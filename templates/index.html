@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduChain Authenticator - Decentralized Verification Network</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        .certificate-card {
+            background-color: #fffaf0;
+            border: 10px double #d4af37;
+            padding: 2rem;
+            position: relative;
+        }
+        .cert-title {
+            font-family: 'Times New Roman', serif;
+            color: #1a202c;
+        }
+        .hash-footer {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #4a5568;
+            word-break: break-all;
+        }
+        .tab-active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-md">
+        <div class="container mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-link text-blue-400 text-2xl"></i>
+                <h1 class="text-xl font-bold tracking-wider">EduChain Authenticator</h1>
+            </div>
+            <nav class="flex gap-4 overflow-x-auto w-full md:w-auto">
+                <button onclick="switchTab('issuance')" id="tab-issuance" class="tab-btn pb-1 hover:text-blue-300 transition tab-active whitespace-nowrap">Issuance Portal</button>
+                <button onclick="switchTab('verifier')" id="tab-verifier" class="tab-btn pb-1 hover:text-blue-300 transition whitespace-nowrap">Public Verifier</button>
+                <button onclick="switchTab('ledger')" id="tab-ledger" class="tab-btn pb-1 hover:text-blue-300 transition whitespace-nowrap">Blockchain Ledger</button>
+                <button onclick="switchTab('sandbox')" id="tab-sandbox" class="tab-btn pb-1 hover:text-blue-300 transition whitespace-nowrap">Tamper Sandbox</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-6 py-8 overflow-y-auto">
+        
+        <!-- Issuance Portal -->
+        <section id="section-issuance" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2"><i class="fa-solid fa-pen-nib"></i> Issue New Certificate</h2>
+                <form id="issue-form" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Certificate ID</label>
+                            <input type="text" id="cert_id" value="CERT-2026-90412" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Student ID</label>
+                            <input type="text" id="student_id" value="STU-2026-8942" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Student Full Name</label>
+                        <input type="text" id="student_name" value="Alice Johnson" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Degree / Qualification</label>
+                        <input type="text" id="degree" value="Bachelor of Science in Computer Science" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Major / Specialization</label>
+                        <input type="text" id="major" value="Cybersecurity" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Institution Name</label>
+                        <input type="text" id="institution" value="Global Tech University" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Graduation Date</label>
+                            <input type="date" id="graduation_date" value="2026-05-15" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Grade / CGPA</label>
+                            <input type="text" id="grade" value="3.95 GPA" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Issue Date (ISO 8601)</label>
+                        <input type="text" id="issue_date" value="2026-09-30T21:12:39Z" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2">
+                    </div>
+                    
+                    <button type="button" onclick="issueCertificate()" class="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition font-medium flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-cube"></i> Generate SHA-256 & Mint Block
+                    </button>
+                </form>
+            </div>
+            
+            <div class="flex flex-col gap-4">
+                <!-- Certificate Preview -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex-grow flex items-center justify-center min-h-[400px]">
+                    <div id="certificate-preview" class="certificate-card w-full max-w-lg text-center hidden flex-col items-center gap-4">
+                        <i class="fa-solid fa-graduation-cap text-5xl text-yellow-600 mb-2"></i>
+                        <h3 class="cert-title text-2xl font-bold uppercase tracking-widest" id="preview-institution">Global Tech University</h3>
+                        <p class="text-sm italic mt-2">Hereby confers upon</p>
+                        <h2 class="cert-title text-3xl font-bold text-gray-800" id="preview-name">Alice Johnson</h2>
+                        <p class="text-sm italic">the degree of</p>
+                        <h3 class="cert-title text-xl font-semibold" id="preview-degree">Bachelor of Science in Computer Science</h3>
+                        <p class="text-sm">Major in <span id="preview-major" class="font-semibold">Cybersecurity</span></p>
+                        
+                        <div class="flex justify-between w-full mt-6 px-4 items-end">
+                            <div class="text-left text-xs">
+                                <p><strong>Date:</strong> <span id="preview-date">2026-05-15</span></p>
+                                <p><strong>ID:</strong> <span id="preview-id">STU-2026-8942</span></p>
+                            </div>
+                            <img id="preview-qr" src="" alt="QR Code" class="w-24 h-24 border bg-white p-1">
+                            <div class="text-right text-xs">
+                                <p><strong>Grade:</strong> <span id="preview-grade">3.95 GPA</span></p>
+                                <p><strong>Issued:</strong> <span id="preview-issue-date">2026-09-30</span></p>
+                            </div>
+                        </div>
+                        <div class="w-full mt-4 pt-4 border-t border-gray-300">
+                            <p class="text-xs text-gray-500 mb-1">Blockchain SHA-256 Signature:</p>
+                            <p class="hash-footer" id="preview-hash">...</p>
+                        </div>
+                    </div>
+                    <div id="preview-placeholder" class="text-gray-400 flex flex-col items-center gap-2">
+                        <i class="fa-regular fa-image text-4xl"></i>
+                        <p>Fill the form and mint block to preview certificate.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Public Verifier -->
+        <section id="section-verifier" class="hidden max-w-3xl mx-auto mt-10">
+            <div class="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-2xl font-semibold mb-2 flex items-center gap-2 text-center justify-center"><i class="fa-solid fa-shield-check"></i> Certificate Verifier</h2>
+                <p class="text-gray-500 text-center mb-8">Enter the SHA-256 hash or Certificate ID to query the blockchain ledger.</p>
+                
+                <div class="flex gap-2 mb-8">
+                    <input type="text" id="verify-hash" placeholder="Enter SHA-256 Hash..." class="flex-grow rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-3 font-mono text-sm">
+                    <button onclick="verifyCertificate()" class="bg-slate-800 text-white py-3 px-6 rounded-md hover:bg-slate-700 transition font-medium">Verify</button>
+                </div>
+
+                <div id="verify-result" class="hidden rounded-lg p-6 border transition-all duration-300">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div id="verify-icon" class="text-4xl"></div>
+                        <div>
+                            <h3 id="verify-status-title" class="text-xl font-bold"></h3>
+                            <p id="verify-status-desc" class="text-sm"></p>
+                        </div>
+                    </div>
+                    <div id="verify-details" class="bg-white/50 rounded p-4 font-mono text-sm space-y-2 mt-4">
+                        <p><strong>Student ID:</strong> <span id="v-student-id"></span></p>
+                        <p><strong>Issuer Address:</strong> <span id="v-issuer" class="break-all"></span></p>
+                        <p><strong>Timestamp:</strong> <span id="v-timestamp"></span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blockchain Ledger -->
+        <section id="section-ledger" class="hidden">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-semibold flex items-center gap-2"><i class="fa-solid fa-link"></i> Blockchain Ledger Explorer</h2>
+                    <button onclick="loadLedger()" class="text-sm bg-gray-100 hover:bg-gray-200 py-2 px-4 rounded border"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+                </div>
+                <div id="ledger-blocks" class="space-y-6">
+                    <!-- Blocks will be populated here -->
+                    <p class="text-gray-500 text-center py-8">Loading blocks...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tamper Sandbox -->
+        <section id="section-sandbox" class="hidden max-w-4xl mx-auto">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6 border-l-4 border-l-yellow-400">
+                <h2 class="text-2xl font-semibold mb-2 flex items-center gap-2"><i class="fa-solid fa-flask"></i> Interactive Tamper Testing Sandbox</h2>
+                <p class="text-gray-600 mb-4">This sandbox demonstrates how changing a single character in the certificate payload alters the resulting SHA-256 hash, immediately invalidating it against the blockchain record.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-medium mb-2 text-gray-700">Original Payload (JSON)</h3>
+                        <textarea id="sandbox-original" rows="12" class="w-full font-mono text-sm p-3 border rounded bg-gray-50 text-gray-600" readonly></textarea>
+                        <p class="text-xs text-gray-500 mt-1">Hash: <span id="sandbox-original-hash" class="font-bold text-gray-800 break-all"></span></p>
+                    </div>
+                    <div>
+                        <h3 class="font-medium mb-2 text-gray-700">Tampered Payload (Edit Me!)</h3>
+                        <textarea id="sandbox-tampered" rows="12" class="w-full font-mono text-sm p-3 border rounded focus:ring-blue-500 focus:border-blue-500 bg-white" oninput="testTamper()"></textarea>
+                        <p class="text-xs text-gray-500 mt-1">Hash: <span id="sandbox-tampered-hash" class="font-bold text-gray-800 break-all"></span></p>
+                    </div>
+                </div>
+
+                <div id="tamper-result-banner" class="mt-6 p-4 rounded text-center font-bold text-lg hidden">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Tab logic
+        function switchTab(tabId) {
+            ['issuance', 'verifier', 'ledger', 'sandbox'].forEach(id => {
+                document.getElementById('section-' + id).classList.add('hidden');
+                document.getElementById('tab-' + id).classList.remove('tab-active');
+            });
+            document.getElementById('section-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId).classList.add('tab-active');
+
+            if(tabId === 'ledger') loadLedger();
+        }
+
+        // Check URL parameters for hash (from QR Code deep-link)
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const hash = urlParams.get('hash');
+            if (hash) {
+                switchTab('verifier');
+                document.getElementById('verify-hash').value = hash;
+                verifyCertificate();
+            }
+        };
+
+        function getFormData() {
+            return {
+                certificate_id: document.getElementById('cert_id').value,
+                student_id: document.getElementById('student_id').value,
+                student_name: document.getElementById('student_name').value,
+                degree: document.getElementById('degree').value,
+                major: document.getElementById('major').value,
+                institution: document.getElementById('institution').value,
+                graduation_date: document.getElementById('graduation_date').value,
+                grade: document.getElementById('grade').value,
+                issue_date: document.getElementById('issue_date').value
+            };
+        }
+
+        async function issueCertificate() {
+            const payload = getFormData();
+            
+            try {
+                const response = await fetch('/api/issue', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Update Preview
+                    document.getElementById('preview-placeholder').classList.add('hidden');
+                    document.getElementById('certificate-preview').classList.remove('hidden');
+                    document.getElementById('certificate-preview').classList.add('flex');
+                    
+                    document.getElementById('preview-institution').innerText = payload.institution;
+                    document.getElementById('preview-name').innerText = payload.student_name;
+                    document.getElementById('preview-degree').innerText = payload.degree;
+                    document.getElementById('preview-major').innerText = payload.major;
+                    document.getElementById('preview-date').innerText = payload.graduation_date;
+                    document.getElementById('preview-id').innerText = payload.student_id;
+                    document.getElementById('preview-grade').innerText = payload.grade;
+                    document.getElementById('preview-issue-date').innerText = payload.issue_date.split('T')[0];
+                    document.getElementById('preview-hash').innerText = data.cert_hash;
+                    
+                    document.getElementById('preview-qr').src = 'data:image/png;base64,' + data.qr_code_base64;
+                    
+                    // Setup Sandbox
+                    setupSandbox(payload, data.cert_hash);
+                    
+                    confetti({
+                        particleCount: 150,
+                        spread: 80,
+                        origin: { y: 0.6 }
+                    });
+                } else {
+                    alert('Error: ' + data.detail);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Failed to connect to API');
+            }
+        }
+
+        async function verifyCertificate() {
+            const hash = document.getElementById('verify-hash').value.trim();
+            if (!hash) return;
+            
+            try {
+                const response = await fetch('/api/verify/' + hash);
+                const data = await response.json();
+                
+                const resultDiv = document.getElementById('verify-result');
+                const iconDiv = document.getElementById('verify-icon');
+                const titleEl = document.getElementById('verify-status-title');
+                const descEl = document.getElementById('verify-status-desc');
+                
+                resultDiv.classList.remove('hidden');
+                
+                document.getElementById('v-student-id').innerText = data.studentId || 'N/A';
+                document.getElementById('v-issuer').innerText = data.issuer || 'N/A';
+                document.getElementById('v-timestamp').innerText = data.issueTimestamp ? new Date(data.issueTimestamp * 1000).toLocaleString() : 'N/A';
+
+                if (data.isFound) {
+                    if (data.isValid) {
+                        resultDiv.className = 'rounded-lg p-6 border transition-all duration-300 bg-green-50 border-green-200 text-green-900';
+                        iconDiv.innerHTML = '<i class="fa-solid fa-circle-check text-green-600"></i>';
+                        titleEl.innerText = 'VERIFIED GENUINE';
+                        descEl.innerText = 'This certificate hash was found on the blockchain and is valid.';
+                        descEl.className = "text-green-700";
+                    } else if (data.isRevoked) {
+                        resultDiv.className = 'rounded-lg p-6 border transition-all duration-300 bg-yellow-50 border-yellow-200 text-yellow-900';
+                        iconDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>';
+                        titleEl.innerText = 'REVOKED';
+                        descEl.innerText = 'This certificate was revoked by the issuer. Reason: ' + data.revokeReason;
+                        descEl.className = "text-yellow-700";
+                    }
+                } else {
+                    resultDiv.className = 'rounded-lg p-6 border transition-all duration-300 bg-red-50 border-red-200 text-red-900';
+                    iconDiv.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-600"></i>';
+                    titleEl.innerText = 'TAMPERED / NOT FOUND';
+                    descEl.innerText = 'This hash does not exist on the ledger. The certificate is either fraudulent or tampered with.';
+                    descEl.className = "text-red-700";
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function loadLedger() {
+            try {
+                const response = await fetch('/api/ledger');
+                const data = await response.json();
+                
+                const container = document.getElementById('ledger-blocks');
+                container.innerHTML = '';
+                
+                // Reverse to show latest first
+                [...data.chain].reverse().forEach(block => {
+                    const txHtml = block.transactions.map(tx => `
+                        <div class="bg-gray-50 p-2 rounded text-xs font-mono mb-2 border flex justify-between items-center">
+                            <div>
+                                <span class="text-blue-600 font-bold">TX:</span> ${tx.tx_hash}<br>
+                                <span class="text-purple-600 font-bold">CERT:</span> ${tx.cert_hash}
+                            </div>
+                            <span class="px-2 py-1 bg-slate-200 rounded font-bold text-slate-700">${tx.status}</span>
+                        </div>
+                    `).join('');
+
+                    const blockEl = document.createElement('div');
+                    blockEl.className = 'border rounded-lg overflow-hidden';
+                    blockEl.innerHTML = `
+                        <div class="bg-slate-100 p-3 border-b flex justify-between items-center">
+                            <div class="font-bold text-slate-800"><i class="fa-solid fa-cube text-slate-500 mr-2"></i> Block #${block.index}</div>
+                            <div class="text-xs text-gray-500">${new Date(block.timestamp * 1000).toLocaleString()}</div>
+                        </div>
+                        <div class="p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <p class="text-xs font-bold text-gray-500">Block Hash</p>
+                                    <p class="font-mono text-xs break-all bg-gray-50 p-1 border rounded">${block.hash}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-gray-500">Previous Hash</p>
+                                    <p class="font-mono text-xs break-all bg-gray-50 p-1 border rounded">${block.previous_hash}</p>
+                                </div>
+                            </div>
+                            <p class="text-xs font-bold text-gray-500 mb-2">Transactions (${block.transactions.length})</p>
+                            ${txHtml || '<p class="text-xs text-gray-400 italic">No transactions (Genesis Block)</p>'}
+                        </div>
+                    `;
+                    container.appendChild(blockEl);
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function setupSandbox(payload, originalHash) {
+            const keysSorted = Object.keys(payload).sort();
+            const sortedPayload = {};
+            keysSorted.forEach(k => sortedPayload[k] = payload[k]);
+            
+            // Format nice JSON
+            const originalJson = JSON.stringify(sortedPayload, null, 2);
+            document.getElementById('sandbox-original').value = originalJson;
+            document.getElementById('sandbox-original-hash').innerText = originalHash;
+            
+            document.getElementById('sandbox-tampered').value = originalJson;
+            document.getElementById('sandbox-tampered-hash').innerText = originalHash;
+            
+            const banner = document.getElementById('tamper-result-banner');
+            banner.classList.remove('hidden');
+            banner.className = 'mt-6 p-4 rounded text-center font-bold text-lg bg-green-100 text-green-800 border border-green-300';
+            banner.innerHTML = '<i class="fa-solid fa-check-circle"></i> MATCH: Payload is Authentic';
+        }
+
+        async function testTamper() {
+            const tamperedJson = document.getElementById('sandbox-tampered').value;
+            const originalHash = document.getElementById('sandbox-original-hash').innerText;
+            const banner = document.getElementById('tamper-result-banner');
+            
+            try {
+                const payload = JSON.parse(tamperedJson);
+                
+                const response = await fetch('/api/tamper', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                document.getElementById('sandbox-tampered-hash').innerText = data.tampered_hash;
+                
+                if (data.tampered_hash === originalHash) {
+                    banner.className = 'mt-6 p-4 rounded text-center font-bold text-lg bg-green-100 text-green-800 border border-green-300';
+                    banner.innerHTML = '<i class="fa-solid fa-check-circle"></i> MATCH: Payload is Authentic';
+                } else {
+                    banner.className = 'mt-6 p-4 rounded text-center font-bold text-lg bg-red-100 text-red-800 border border-red-300';
+                    banner.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ⚠️ TAMPER WARNING / FORGERY DETECTED';
+                }
+            } catch (e) {
+                // Invalid JSON
+                document.getElementById('sandbox-tampered-hash').innerText = 'Invalid JSON format';
+                banner.className = 'mt-6 p-4 rounded text-center font-bold text-lg bg-gray-100 text-gray-800 border border-gray-300';
+                banner.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Fix JSON Formatting';
+            }
+        }
+    </script>
+</body>
+</html>
